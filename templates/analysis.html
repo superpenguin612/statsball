@@ -1,0 +1,319 @@
+{% extends "template.html" %}
+{% block content %}
+
+
+<script src="static/js/graphing.js"></script>
+<script type="text/javascript">
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(callback);
+responses = [
+	{% for resp in responses %}
+		{"Score":{{resp.score if resp.score != "" else 0}},"Age":{{resp.age if resp.age != "" else 0}},"Gender":{{resp.gender if resp.gender != "" else 0}},"Knowledge":{{resp.knowledge if resp.knowledge != "" else 0}}},
+	{% endfor %}
+]
+
+
+
+
+
+function cdf(x, dof) {
+    var dof2 = dof / 2;
+    return ibeta((x + Math.sqrt(x * x + dof)) /
+                       (2 * Math.sqrt(x * x + dof)), dof2, dof2);
+}
+
+function ibeta(x, a, b) {
+  var bt = (x === 0 || x === 1) ?  0 :
+    Math.exp(gammaln(a + b) - gammaln(a) -
+             gammaln(b) + a * Math.log(x) + b *
+             Math.log(1 - x));
+  if (x < 0 || x > 1)
+    return false;
+  if (x < (a + 1) / (a + b + 2))
+    return bt * betacf(x, a, b) / a;
+  return 1 - bt * betacf(1 - x, b, a) / b;
+};
+
+function gammaln(x) {
+  var j = 0;
+  var cof = [
+    76.18009172947146, -86.50532032941677, 24.01409824083091,
+    -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5
+  ];
+  var ser = 1.000000000190015;
+  var xx, y, tmp;
+  tmp = (y = xx = x) + 5.5;
+  tmp -= (xx + 0.5) * Math.log(tmp);
+  for (; j < 6; j++)
+    ser += cof[j] / ++y;
+  return Math.log(2.5066282746310005 * ser / xx) - tmp;
+}
+
+function betacf(x, a, b) {
+  var fpmin = 1e-30;
+  var m = 1;
+  var qab = a + b;
+  var qap = a + 1;
+  var qam = a - 1;
+  var c = 1;
+  var d = 1 - qab * x / qap;
+  var m2, aa, del, h;
+  if (Math.abs(d) < fpmin)
+    d = fpmin;
+  d = 1 / d;
+  h = d;
+  for (; m <= 100; m++) {
+    m2 = 2 * m;
+    aa = m * (b - m) * x / ((qam + m2) * (a + m2));
+    // One step (the even one) of the recurrence
+    d = 1 + aa * d;
+    if (Math.abs(d) < fpmin)
+      d = fpmin;
+    c = 1 + aa / c;
+    if (Math.abs(c) < fpmin)
+      c = fpmin;
+    d = 1 / d;
+    h *= d * c;
+    aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
+    // Next step of the recurrence (the odd one)
+    d = 1 + aa * d;
+    if (Math.abs(d) < fpmin)
+      d = fpmin;
+    c = 1 + aa / c;
+    if (Math.abs(c) < fpmin)
+      c = fpmin;
+    d = 1 / d;
+    del = d * c;
+    h *= del;
+    if (Math.abs(del - 1.0) < 3e-7)
+      break;
+  }
+  return h;
+};
+
+function callback() {
+  updategraph();
+}
+function NormSInv(p) {
+    var a1 = -39.6968302866538, a2 = 220.946098424521, a3 = -275.928510446969;
+    var a4 = 138.357751867269, a5 = -30.6647980661472, a6 = 2.50662827745924;
+    var b1 = -54.4760987982241, b2 = 161.585836858041, b3 = -155.698979859887;
+    var b4 = 66.8013118877197, b5 = -13.2806815528857, c1 = -7.78489400243029E-03;
+    var c2 = -0.322396458041136, c3 = -2.40075827716184, c4 = -2.54973253934373;
+    var c5 = 4.37466414146497, c6 = 2.93816398269878, d1 = 7.78469570904146E-03;
+    var d2 = 0.32246712907004, d3 = 2.445134137143, d4 = 3.75440866190742;
+    var p_low = 0.02425, p_high = 1 - p_low;
+    var q, r;
+    var retVal;
+    if ((p < 0) || (p > 1)) {
+        retVal = 0;
+    } else if (p < p_low) {
+        q = Math.sqrt(-2 * Math.log(p));
+        retVal = (((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6) / ((((d1*q+d2)*q+d3)*q+d4)*q+1);
+    } else if (p <= p_high) {
+        q = p - 0.5;
+        r = q*q;
+        retVal = (((((a1*r+a2)*r+a3)*r+a4)*r+a5)*r+a6)*q / (((((b1*r+b2)*r+b3)*r+b4)*r+b5)*r+1);
+    } else {
+        q = Math.sqrt(-2*Math.log(1 - p));
+        retVal = -(((((c1*q+c2)*q+c3)*q+c4)*q+c5)*q+c6) / ((((d1*q+d2)*q+d3)*q+d4)*q+1);
+    }
+    return retVal;
+}
+function writeconstants(name,arr) {
+	let g = arr.sort(function (a, b) {return a - b;});
+	let n = g.length;
+	var Sx = 0;
+	var Sxx = 0;
+	for (var x=0;x<arr.length;x++) {
+		Sx += arr[x];
+		Sxx += arr[x]*arr[x];
+	}
+	if (n>0) {
+		document.getElementById(name + " n").innerHTML = (n);
+		document.getElementById(name + " u").innerHTML = (Sx/n).toFixed(4);
+		document.getElementById(name + " s").innerHTML = (Math.sqrt((Sxx-Sx*Sx/n)/(n-1))).toFixed(4);
+		document.getElementById(name + " q0").innerHTML = (g[0]);
+		document.getElementById(name + " q1").innerHTML = (g[Math.floor(g.length/4)]);
+		document.getElementById(name + " q2").innerHTML = (g[Math.floor(g.length/2)]);
+		document.getElementById(name + " q3").innerHTML = (g[Math.floor(g.length*3/4)]);
+		document.getElementById(name + " q4").innerHTML = (g[g.length-1]);
+	}
+}
+
+function updategraph() {
+	var res = [["Age","Score"]];//
+	var Sx = 0;
+	var Sy = 0;
+	var Sxx = 0;
+	var Sxy = 0;
+	var Syy = 0;
+	for (var resp=0;resp<responses.length;resp++) {
+		let score = responses[resp]["Score"];
+		let age = responses[resp]["Age"];
+		Sx += age;
+		Sxx += age*age;
+		Sxy += age*score;
+		Syy += score*score;
+		Sy += score;
+		res.push([age,score]);
+	}
+	let n = res.length-1;
+	drawScatterPlot(res,"graph2","Score vs Age Scatterplot","Age (Years)","Score (Points)",true);
+	var res2 = [["Score","Percentile"]].concat(res.slice(1).sort(function (a, b) {return a[1] - b[1];}));// 
+	for (var x=1;x<res2.length;x++) {
+		res2[x] = [res2[x][1],x/(res2.length-1)]
+	}
+	drawScatterPlot(res2,"graph1","Percentile Rank for Score","Score (Points)","Percentile Rank",false);
+
+	let meanx = Sx/n;
+	let stdevx = Math.sqrt((Sxx-Sx*Sx/n)/n);
+	let meany = Sy/n;
+	let stdevy = Math.sqrt((Syy-Sy*Sy/n)/n);
+	let r = (n*Sxy-Sx*Sy)/Math.sqrt((n*Sxx-Sx*Sx)*(n*Syy-Sy*Sy));
+
+
+	let slope = r*stdevy/stdevx;
+	let intercept = meany-slope*meanx;
+
+	var sqres = 0
+
+	var res3 = [["Age","Residual"]];//
+	for (var resp=0;resp<responses.length;resp++) {
+		let score = responses[resp]["Score"];
+		let age = responses[resp]["Age"];
+		let res = score-(intercept+age*slope)
+		sqres = sqres + res*res
+		res3.push([age,res]);
+	}
+	drawScatterPlot(res3,"graph3","Residual plot for Age vs. Score","Age (Years)","Residual",false);
+
+	var res4 = [["Residual","Expected Z"]].concat(res3.slice(1).sort(function (a, b) {return a[1] - b[1];}));// 
+	for (var x=1;x<res4.length;x++) {
+		res4[x] = [res4[x][1],NormSInv((x-.5)/(res4.length-1))];
+	}
+	drawScatterPlot(res4,"graph4","NPP plot for residual","Residual","Expected Z",true);
+	//---=-=-=-=-==-=-=-=-=-=--=-=-=-=-==-=-=-=-=-=--=-=-=-=-==-=-=-=-=-=--=-=-=-=-==-=-=-=-=-=
+	writeconstants("All",responses.map(function(a) {return a["Score"]}))
+	writeconstants("Male",  responses.filter(function (a) {return a["Gender"]==0;}).map(function(a) {return a["Score"]}))
+	writeconstants("Female",responses.filter(function (a) {return a["Gender"]==1;}).map(function(a) {return a["Score"]}))
+	writeconstants("None",    responses.filter(function (a) {return a["Knowledge"]==0;}).map(function(a) {return a["Score"]}))
+	writeconstants("Little",  responses.filter(function (a) {return a["Knowledge"]==1;}).map(function(a) {return a["Score"]}))
+	writeconstants("Moderate",responses.filter(function (a) {return a["Knowledge"]==2;}).map(function(a) {return a["Score"]}))
+	writeconstants("A Lot",   responses.filter(function (a) {return a["Knowledge"]==3;}).map(function(a) {return a["Score"]}))
+
+	let s = Math.sqrt(sqres/(n-2));
+	let xerr = (Sxx-Sx*Sx/n);
+
+	let constse = s*Math.sqrt(1/n+meanx*meanx/xerr);
+	let agese = s*Math.sqrt(1/xerr);
+
+	let p1 = 2*cdf(-Math.abs(intercept/constse),n-2);
+	let p2 = 2*cdf(-Math.abs(slope/agese),n-2);
+
+	document.getElementById("const coef").innerHTML = (intercept).toFixed(4);
+	document.getElementById("age coef").innerHTML = (slope).toFixed(4);
+
+	document.getElementById("const se").innerHTML = constse.toFixed(4);
+	document.getElementById("age se").innerHTML = agese.toFixed(4);
+
+	document.getElementById("const t").innerHTML = (intercept/constse).toFixed(4);
+	document.getElementById("age t").innerHTML = (slope/agese).toFixed(4);
+
+	document.getElementById("const p").innerHTML = p1.toFixed(4);
+	document.getElementById("age p").innerHTML = p2.toFixed(4);
+
+
+	document.getElementById("final s").innerHTML = ("s="+s.toFixed(4));
+	document.getElementById("final rsq").innerHTML = ("R-Sq="+(r*r).toFixed(4));
+	document.getElementById("final rsqadj").innerHTML = ("R-Sq(adj)="+(1-(1-r*r)*(n-1)/(n-2)).toFixed(4));
+
+}
+</script>
+
+{% macro gridrow(name) -%}
+<tr>
+    <th>{{name}}</th>
+    <td id="{{name}} n">0</td>
+    <td id="{{name}} u">n/a</td>
+    <td id="{{name}} s">n/a</td>
+    <td id="{{name}} q0">n/a</td>
+    <td id="{{name}} q1">n/a</td>
+    <td id="{{name}} q2">n/a</td>
+    <td id="{{name}} q3">n/a</td>
+    <td id="{{name}} q4">n/a</td>
+</tr>
+{%- endmacro %}
+
+<br>
+<h3>Descriptive Statistics (Score)</h3>
+<table class="table table-bordered table-hover">
+    <tbody>
+        <tr>
+            <th>Group</th>
+            <th>n</th>
+            <th>Mean</th>
+            <th>StDev</th>
+            <th>Min</th>
+            <th>Q1</th>
+            <th>Median</th>
+            <th>Q3</th>
+            <th>Max</th>
+        </tr>
+        {{gridrow("All")}}
+        {{gridrow("Female")}}
+        {{gridrow("Male")}}
+        {{gridrow("None")}}
+        {{gridrow("Little")}}
+        {{gridrow("Moderate")}}
+        {{gridrow("A Lot")}}
+    </tbody>
+</table>
+<br>
+
+<div id="graph1" style="width: 900px; height: 500px;margin-left:auto;margin-right:auto;"></div>
+
+<br>
+<h3>Regression Analysis: Age vs. Score</h3>
+<table class="table bordered">
+    <tbody>
+        <tr>
+            <th>Variable</th>
+            <th>Coef</th>
+            <th>SE</th>
+            <th>T</th>
+            <th>P</th>
+        </tr>
+        <tr>
+            <td>Constant</td>
+            <td id="const coef">n/a</td>
+            <td id="const se">n/a</td>
+            <td id="const t">n/a</td>
+            <td id="const p">n/a</td>
+        </tr>
+        <tr>
+            <td>Age</td>
+            <td id="age coef">n/a</td>
+            <td id="age se">n/a</td>
+            <td id="age t">n/a</td>
+            <td id="age p">n/a</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="table bordered">
+    <tbody>
+        <tr>
+            <td id="final s">s=n/a</td>
+            <td id="final rsq">R-Sq=n/a</td>
+            <td id="final rsqadj">R-Sq(adj)=n/a</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+
+<div id="graph2" style="width: 900px; height: 500px;margin-left:auto;margin-right:auto;"></div>
+<div id="graph3" style="width: 900px; height: 500px;margin-left:auto;margin-right:auto;"></div>
+<div id="graph4" style="width: 900px; height: 500px;margin-left:auto;margin-right:auto;"></div>
+
+{% endblock %}

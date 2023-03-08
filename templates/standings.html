@@ -1,0 +1,116 @@
+{% extends "template.html" %}
+
+
+
+{% block content %}
+
+<h3>Filters</h3>
+<div class="form-row">
+    <script>
+      function droppy() {
+        loadTable("maintable",['rank','score','first','last','knowledge','school'],responses)
+
+
+        // if ($(document.getElementById('schoolselect')).val() == "other") {
+        //   document.getElementById('otherschool').style.display = "block";
+        // } else {
+        //   document.getElementById('otherschool').style.display = "none";
+        // }
+      }
+    </script>
+    <div class="form-group col">
+        <label>High School Affiliation</label>
+        <select name="school" class="custom-select" onchange="droppy()" id="schoolselect" required>
+          <option value="any" selected>Any</option>
+          {% for school in data.schools %}
+            <option value="{{school}}">{{school}}</option>
+          {% endfor %}
+          <!-- <option value="other">Other</option> -->
+        </select>
+
+    </div>
+    <div class="form-group col">
+        <label>College Basketball Knowledge</label>
+        <select name="knowledge" class="custom-select" onchange="droppy()" id="knowledgeselect" required>
+            <option value="any" selected>Any</option>
+            <option value="None">None</option>
+            <option value="Little">Little</option>
+            <option value="Moderate">Moderate</option>
+            <option value="A Lot">A Lot</option>
+        </select>
+    </div>
+</div>
+
+<h3>Standings</h3>
+<div class="form-row">
+    Click on any value in a row to see the bracket submission.
+</div>
+
+<table class="table table-bordered table-hover" id="maintable">
+    <tr>
+        <th>Rank</th>
+        <th>Points</th>
+        <th>First</th>
+        <th>Last</th>
+        <th>Knowledge</th>
+        <th>School</th>
+    </tr>
+</table>
+<script>
+function loadTable(tableId, fields, data) {
+    //$('#' + tableId).empty(); //not really necessary
+
+    var ssel = $(document.getElementById('schoolselect')).val()
+    var ksel = $(document.getElementById('knowledgeselect')).val()
+
+    var rows = '<tr><th>Rank</th><th>Points</th><th>First</th><th>Last</th><th>Knowledge</th><th>School</th></tr>';
+    $.each(data, function(index, item) {
+        if ((ssel == 'any' || ssel == item['school']) && (ksel == 'any' || ksel == item['knowledge'])) {
+            var row = '<tr>';
+            $.each(fields, function(index, field) {
+                row += '<td><a href="/viewrecord?record='+item['id']+'" style="color:white;">'+item[field+'']+'</a></td>';
+            });
+            rows += row + '<tr>';
+        }
+    });
+    $('#' + tableId).html(rows);
+}
+
+let responses = [
+
+{% set prev = [333] %}
+{% set prevind = [333] %}
+{% for resp in responses|sort(attribute='data.score', reverse = True) %}
+    {% if resp.data.score != -1 %}
+        {% if resp.data.score == prev[0] %}
+            {"id":{{resp.id}},"rank":{{prevind[0]}},"score":{{resp.data.score}},"first":"{{resp.data.first}}","last":"{{resp.data.last}}",
+    "knowledge":"{{["None","Little","Moderate","A Lot"][resp["data"]["knowledge"] if resp["data"]["knowledge"] != "" else 0]}}",
+    "school":"{{resp.data.school}}"},
+
+            // personprint(prevind[0],resp.data,resp.id)
+        {% else %}
+            {% if prevind.pop() %}{% endif %}
+            {% if prevind.append(loop.index) %}{% endif %}
+                {"id":{{resp.id}},"rank":{{loop.index}},"score":{{resp.data.score}},"first":"{{resp.data.first}}","last":"{{resp.data.last}}",
+    "knowledge":"{{["None","Little","Moderate","A Lot"][resp["data"]["knowledge"] if resp["data"]["knowledge"] != "" else 0]}}",
+    "school":"{{resp.data.school}}"},
+
+            // personprint(loop.index,resp.data,resp.id)
+        {% endif %}
+        {% if prev.pop() %}{% endif %}
+        {% if prev.append(resp.data.score) %}{% endif %}
+    {% endif %}
+{% endfor %}
+
+];
+
+loadTable("maintable",['rank','score','first','last','knowledge','school'],responses)
+
+
+</script>
+{% endblock %}
+
+
+
+
+

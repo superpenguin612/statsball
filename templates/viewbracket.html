@@ -1,0 +1,44 @@
+{% extends "template.html" %}
+
+{% block content %}
+    
+<H1>{{person.first}} {{person.last}}'s bracket</H1>
+
+<div class="form-row">
+    <div class="form-group col">
+        <label>Current Score:</label>
+        {{person.score}}
+    </div>
+</div>
+<div class="form-row">
+    <div class="form-group col">
+        <label>Knowledge level:</label>
+        {{ ["None","Little","Moderate","A Lot"][person.knowledge] }}
+    </div>
+    <div class="form-group col">
+        <label>Affiliated School:</label>
+        {{person.school}}
+    </div>
+</div>
+
+<h3>{{data.southname}}</h3>
+<hr>
+{{wholebracketTeamsStale("south",data.competing.southteams,recguess,data.answers)}}
+<h3>{{data.westname}}</h3>
+<hr>
+{{wholebracketTeamsStale("west",data.competing.westteams,recguess,data.answers)}}
+<h3>{{data.eastname}}</h3>
+<hr>
+{{wholebracketTeamsStale("east",data.competing.eastteams,recguess,data.answers)}}
+<h3>{{data.midwestname}}</h3>
+<hr>
+{{wholebracketTeamsStale("midwest",data.competing.midwestteams,recguess,data.answers)}}
+<h3>Final Four</h3>
+<hr>
+<div class="form-row" style="min-width:800px;">
+    {{simpleRoundTeamsStale("F",4,4,recguess,data.answers)}}
+    {{simpleRoundTeamsStale("F",5,2,recguess,data.answers)}}
+    {{simpleRoundTeamsStale("F",6,1,recguess,data.answers)}}
+</div>
+
+{% endblock %}

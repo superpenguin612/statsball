@@ -1,0 +1,5 @@
+"score","age","first","last","gender","school","email"
+{% for resp in responses|sort(attribute='score', reverse = True) -%}
+{{resp["score"]}},{{resp["age"] if resp["age"] != "" else 0}},"{{resp["first"]}}","{{resp["last"]}}",{{resp["gender"] if resp["gender"] != "" else 0}},{{resp["knowledge"] if resp["knowledge"] != "" else 0}},"{{resp["school"]}}","{{resp["email"]}}"
+{% endfor %}
+

@@ -1,0 +1,193 @@
+{% extends "template.html" %}
+
+{% macro fakepersonprint(n) -%}
+    <tr id="{{n}} row">
+        <td id="{{n}} score"></td>
+        <td><input type="number" class="form-control" step="1" id="{{n}} age"></td>
+        <td><input type="text" class="form-control" id="{{n}} first"></td>
+        <td><input type="text" class="form-control" id="{{n}} last"></td>
+        <td>
+            <select class="custom-select" id="{{n}} gender">
+                <option value="0">Male</option>
+                <option value="1">Female</option>
+            </select>
+        </td>
+        <td>
+            <select class="custom-select" id="{{n}} knowledge">
+                <option value="0">None</option>
+                <option value="1">Little</option>
+                <option value="2">Moderate</option>
+                <option value="3">A Lot</option>
+            </select>
+        </td>
+        <td><input type="text" class="form-control" id="{{n}} school"></td>
+        <td><input type="text" class="form-control" id="{{n}} email"></td>
+        <td><button type="button" class="btn btn-failure btn-submit" id="{{n}} delete">Delete</button></td>
+    </tr>
+{%- endmacro %}
+
+{% block content %}
+
+
+<h3>Filters</h3>
+<div class="form-row">
+    <script>
+      function droppy() {
+        updatepage()
+
+
+        // if ($(document.getElementById('schoolselect')).val() == "other") {
+        //   document.getElementById('otherschool').style.display = "block";
+        // } else {
+        //   document.getElementById('otherschool').style.display = "none";
+        // }
+      }
+    </script>
+    <div class="form-group col">
+        <label>High School Affiliation</label>
+        <select name="school" class="custom-select" onchange="droppy()" id="schoolselect" required>
+          <option value="any" selected>Any</option>
+          {% for school in data.schools %}
+            <option value="{{school}}">{{school}}</option>
+          {% endfor %}
+          <!-- <option value="other">Other</option> -->
+        </select>
+
+    </div>
+    <div class="form-group col">
+        <label>College Basketball Knowledge</label>
+        <select name="knowledge" class="custom-select" onchange="droppy()" id="knowledgeselect" required>
+            <option value="any" selected>Any</option>
+            <option value="None">None</option>
+            <option value="Little">Little</option>
+            <option value="Moderate">Moderate</option>
+            <option value="A Lot">A Lot</option>
+        </select>
+    </div>
+</div>
+
+
+<h3>Standings</h3>
+<input type="number" class="form-control" value="1" step="1" id="page1" min="1">
+<table class="table table-bordered table-hover" style="max-width: 100% !important;">
+    <tr>
+        <th>Points</th>
+        <th>Age</th>
+        <th>First</th>
+        <th>Last</th>
+        <th>Gender</th>
+        <th>Knowledge</th>
+        <th>School</th>
+        <th>Email</th>
+        <th>Delete record</th>
+    </tr>
+    {% for r in range(300) %}
+        {{fakepersonprint(r)}}
+    {% endfor %}
+</table>
+<input type="number" class="form-control" value="1" step="1" id="page2" min="1">
+<script>
+var page = 0
+var area1 = document.getElementById("page1");
+if (area1.addEventListener) {
+  area1.addEventListener('input', function() {
+    page = this.value-1
+    console.log(page)
+    document.getElementById("page2").value = page+1
+    updatepage()
+  }, false);
+} else if (area1.attachEvent) {
+  area1.attachEvent('onpropertychange', function() {
+    page = this.value-1
+    console.log(page)
+    document.getElementById("page2").value = page+1
+    updatepage()
+  });
+}
+var area2 = document.getElementById("page2");
+if (area2.addEventListener) {
+  area2.addEventListener('input', function() {
+    page = this.value-1
+    console.log(page)
+    document.getElementById("page1").value = page+1
+    updatepage()
+  }, false);
+} else if (area2.attachEvent) {
+  area2.attachEvent('onpropertychange', function() {
+    page = this.value-1
+    console.log(page)
+    document.getElementById("page1").value = page+1
+    updatepage()
+  });
+}
+
+
+// document.getElementById("page1").onchange = function() {
+//     page = this.value-1
+//     console.log(page)
+//     document.getElementById("page2").value = page+1
+//     updatepage()
+// }
+// document.getElementById("page2").onchange = function() {
+//     page = this.value-1
+//     document.getElementById("page1").value = page+1
+//     updatepage()
+// }
+let responses = [
+    {% for resp in responses|sort(attribute='data.score', reverse = True) %}
+    {"id":{{resp["id"]}},"score":{{resp["data"]["score"]}},"age":{{resp["data"]["age"] if resp["data"]["age"] != "" else 0}},"first":"{{resp["data"]["first"]}}","last":"{{resp["data"]["last"]}}","gender":{{resp["data"]["gender"] if resp["data"]["gender"] != "" else 0}},"knowledge":{{resp["data"]["knowledge"] if resp["data"]["knowledge"] != "" else 0}},"school":"{{resp["data"]["school"]}}","email":"{{resp["data"]["email"]}}"},
+    {% endfor %}
+]
+function updaterecord(n,m) {
+    if (m >= responses.length) {
+        document.getElementById(String(n)+" row").style.visibility = "collapse";
+    } else {
+        document.getElementById(String(n)+" row").style.visibility = "visible";
+        document.getElementById(String(n)+" score").innerHTML = responses[m]["score"];
+        document.getElementById(String(n)+" age").value       = responses[m]["age"];
+        document.getElementById(String(n)+" first").value     = responses[m]["first"];
+        document.getElementById(String(n)+" last").value      = responses[m]["last"];
+        document.getElementById(String(n)+" gender").value    = responses[m]["gender"];
+        document.getElementById(String(n)+" knowledge").value = responses[m]["knowledge"];
+        document.getElementById(String(n)+" school").value    = responses[m]["school"];
+        document.getElementById(String(n)+" email").value     = responses[m]["email"];
+        document.getElementById(String(n)+" age").onchange       = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"age","age":this.value});}
+        document.getElementById(String(n)+" first").onchange     = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"first","first":this.value});}
+        document.getElementById(String(n)+" last").onchange      = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"last","last":this.value});}
+        document.getElementById(String(n)+" gender").onchange    = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"gender","gender":this.value});}
+        document.getElementById(String(n)+" knowledge").onchange = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"knowledge","knowledge":this.value});}
+        document.getElementById(String(n)+" school").onchange    = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"school","school":this.value});}
+        document.getElementById(String(n)+" email").onchange     = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"email","email":this.value});}
+        document.getElementById(String(n)+" delete").onclick = function() {
+            $.post("deleterecord",{"record":responses[m]["id"]});
+            responses.splice(m,1);
+            updatepage();
+        }
+    }
+}
+function updatepage() {
+
+
+    var ssel = $(document.getElementById('schoolselect')).val()
+    var ksel = $(document.getElementById('knowledgeselect')).val()
+
+
+    for (var x=0;x<300;x++) {
+        if ((ssel == 'any' || ssel == responses[x+page*300]["school"]) && (ksel == 'any' || ksel == ["None","Little","Moderate","A Lot"][responses[x+page*300]["knowledge"]])) {
+            updaterecord(x,x+page*300)
+        }
+    }
+}
+updatepage()
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

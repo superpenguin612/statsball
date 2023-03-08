@@ -1,0 +1,135 @@
+{% extends "template.html" %}
+
+{% block content %}
+<form action="{{ url_for('logout') }}" method="post">
+<button type="submit" class="btn btn-failure btn-submit">Logout</button>
+</form>
+
+<form action="{{ url_for('updatehomepage') }}" method="post">
+    <div class="form-group col">
+        <H1>Homepage HTML</H1>
+        The text area below will be used as the html for the homepage.
+    </div>
+    <div class="form-group col">
+        <textarea rows="4" cols="50" name="homepage" style="color:black;">
+        {{data.homepage}}
+        </textarea>
+    </div>
+    <div class="form-group col">
+        <button type="submit" class="btn btn-success btn-submit" style="margin-left:auto;margin-right:auto;">Submit</button>
+    </div>
+</form>
+
+
+<form action="{{ url_for('updateresources') }}" method="post">
+    <div class="form-group col">
+        <H1>Resources page HTML</H1>
+        The text area below will be used as the html for the resources page.
+    </div>
+    <div class="form-group col">
+        <textarea rows="4" cols="100" name="resources" style="color:black;">
+        {{data.resources}}
+        </textarea>
+    </div>
+    <div class="form-group col">
+        <button type="submit" class="btn btn-success btn-submit" style="margin-left:auto;margin-right:auto;">Submit</button>
+    </div>
+</form>
+
+<form action="{{ url_for('updateschools') }}" method="post">
+    <div class="form-group col">
+        <H1>Registered Schools</H1>
+        The text area below should be a comma-separated list of all schools that are registered. They will show up in the dropdown.
+        <br>
+        <textarea rows="4" cols="50" name="schools" style="color:black;">{% for school in data.schools %}{{school}},{% endfor %}</textarea>
+    </div>
+    <div class="form-group col">
+        <button type="submit" class="btn btn-success btn-submit" style="margin-left:auto;margin-right:auto;">Submit</button>
+    </div>
+</form>
+
+
+{% macro enterround(name,title,teams) -%}
+<div class="form-group col col-bracket">
+    <input type="text" name="{{name}}name" class="btn btn-outline-success btn-block btn-bracket" style="font-weight: bold !important;" value="{{title}}" required>
+    {% for n in range(16) %}
+    <input type="text" name="{{name}} {{n}}" class="btn btn-outline-success btn-block btn-bracket" value="{{teams[n]}}" required>
+    {% endfor %}
+</div>
+{%- endmacro %}
+
+<form action="{{ url_for('updateteams') }}" method="post">
+    <div class="form-group col">
+        <H1>Competing teams</H1>
+    </div>
+    <div class="form-row row-bracket">
+        {{enterround("south",data.southname,data.competing.southteams)}}
+        {{enterround("west",data.westname,data.competing.westteams)}}
+        {{enterround("east",data.eastname,data.competing.eastteams)}}
+        {{enterround("midwest",data.midwestname,data.competing.midwestteams)}}
+    </div>
+    <div class="form-group col">
+        <br>
+        <button type="submit" class="btn btn-success btn-submit" style="margin-left:auto;margin-right:auto;">Submit</button>
+    </div>
+</form>
+
+<script>
+    function toggle() {
+        if (document.getElementById("goggle").innerHTML == "Unlock submission") {
+            document.getElementById("goggle").innerHTML = "Lock submission";
+            $.post("setlocked",{"val":false});
+        }
+        else if (document.getElementById("goggle").innerHTML == "Lock submission") {
+            document.getElementById("goggle").innerHTML = "Unlock submission"
+            $.post("setlocked",{"val":true});
+        }
+    }
+</script>
+<div class="form-group col">
+    {% if (data.locked|string)|lower == "true" %}
+    <H1 id= "goggle">Unlock submission</H1>
+    {% else %}
+    <H1 id= "goggle">Lock submission</H1>
+    {% endif %}
+</div>
+<div class="form-group col">
+    <button type="submit" class="btn btn-failure btn-submit" onclick="toggle()" style="margin-left:auto;margin-right:auto;">Submit</button>
+</div>
+
+
+<form action="{{ url_for('deleteall') }}" method="post">
+    <div class="form-group col">
+        <H1>Delete all records</H1>
+    </div>
+    <div class="form-group col">
+        <button type="submit" class="btn btn-failure btn-submit" style="margin-left:auto;margin-right:auto;">Submit</button>
+    </div>
+</form>
+
+
+<div class="form-group col">
+    <H1>Email all of those who submitted</H1>
+</div>
+<div class="form-group col">
+    <a href='mailto:
+    {% for email in emails %}
+        {{email}}
+        {{ "," if not loop.last }}
+    {% endfor %}
+    '><button type="button" class="btn btn-failure btn-submit" style="margin-left:auto;margin-right:auto;">Bam</button></a>
+</div>
+
+<div class="form-group col">
+    <H1>Download database as CSV file</H1>
+</div>
+<div class="form-group col">
+    <a href='{{ url_for("database") }}' download><button type="button" class="btn btn-failure btn-submit" style="margin-left:auto;margin-right:auto;">Entire database</button></a>
+    <a href='{{ url_for("simpledatabase") }}' download><button type="button" class="btn btn-failure btn-submit" style="margin-left:auto;margin-right:auto;">Simplified database</button></a>
+</div>
+
+
+
+{% endblock %}
+
+

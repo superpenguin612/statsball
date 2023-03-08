@@ -1,0 +1,11 @@
+"score","age","first","last","gender","school","email"
+{%- for g in range(4*(8+4+2)+4+2+1) -%}
+	,"team{{g}}"
+{%- endfor %}
+{% for resp in responses|sort(attribute='score', reverse = True) -%}
+{{resp["score"]}},{{resp["age"] if resp["age"] != "" else 0}},"{{resp["first"]}}","{{resp["last"]}}",{{resp["gender"] if resp["gender"] != "" else 0}},{{resp["knowledge"] if resp["knowledge"] != "" else 0}},"{{resp["school"]}}","{{resp["email"]}}"
+{%- for g in resp["answers"] -%}
+	,"{{g}}"
+{%- endfor %}
+{% endfor %}
+

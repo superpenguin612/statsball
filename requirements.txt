@@ -1,0 +1,9 @@
+Flask==1.0.2
+Jinja2==2.10.1
+psycopg2-binary
+flask-sqlalchemy
+flask-migrate
+gunicorn
+eventlet
+Flask-Script
+MarkupSafe==1.1.1

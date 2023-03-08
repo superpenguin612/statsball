@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+{% macro startRound(name,teams) -%}
+<div class="form-group col col-bracket">
+    {% for n in range(16) %}
+    <button type="button" id="{{name}} 0 {{n}}" value="{{teams[n]}}" class="btn btn-outline-success btn-block btn-bracket" onclick="bracketClick(this)">{{teams[n]}}</button>
+    {% endfor %}
+</div>
+{%- endmacro %}
+
+{% macro simpleRound(name,row,size) -%}
+<div class="form-group col col-bracket">
+    {% for n in range(size) %}
+    <button type="button" id="{{name}} {{row}} {{n}}" value="" class="btn btn-outline-success btn-block btn-bracket" onclick="bracketClick(this)">[None]</button>
+    <input type="text" name="{{name}} {{row}} {{n}}" id="I{{name}} {{row}} {{n}}" value="" style = "visibility: hidden;" required>
+    {% endfor %}
+</div>
+{%- endmacro %}
+
+{% macro simpleRoundTeams(name,row,size,teams) -%}
+<div class="form-group col col-bracket">
+    {% for n in range(size) %}
+    {% if teams[name|string +" "+ row|string +" "+ n|string] == "" %}
+    <button type="button" id="{{name}} {{row}} {{n}}" value="" class="btn btn-outline-success btn-block btn-bracket" onclick="bracketClick(this)">[None]</button>
+    <input type="hidden" name="{{name}} {{row}} {{n}}" id="I{{name}} {{row}} {{n}}" value="">
+    {% else %}
+    <button type="button" id="{{name}} {{row}} {{n}}" value="{{teams[name|string +" "+ row|string +" "+ n|string]}}" class="btn btn-outline-success btn-block btn-bracket" onclick="bracketClick(this)">{{teams[name|string +" "+ row|string +" "+ n|string]}}</button>
+    <input type="hidden" name="{{name}} {{row}} {{n}}" id="I{{name}} {{row}} {{n}}" value="{{teams[name|string +" "+ row|string +" "+ n|string]}}">
+    {% endif %}
+    {% endfor %}
+</div>
+{%- endmacro %}
+
+{% macro simpleRoundTeamsStale(name,row,size,teams,anskey) -%}
+<div class="form-group col col-bracket">
+    {% for n in range(size) %}
+    {% if anskey[name|string +" "+ row|string +" "+ n|string] == "" %}
+        {% if teams[name|string +" "+ row|string +" "+ n|string] == "" %}
+        <button type="button" id="{{name}} {{row}} {{n}}" value="" class="btn btn-outline-success btn-block btn-bracket">[None]</button>
+        {% else %}
+        <button type="button" id="{{name}} {{row}} {{n}}" value="{{teams[name|string +" "+ row|string +" "+ n|string]}}" class="btn btn-outline-success btn-block btn-bracket">{{teams[name|string +" "+ row|string +" "+ n|string]}}</button>
+        {% endif %}
+    {% else %}
+        {% if teams[name|string +" "+ row|string +" "+ n|string] == "" %}
+        <button type="button" id="{{name}} {{row}} {{n}}" value="" class="btn btn-outline-success btn-block btn-bracket">[None]</button>
+        {% else %}
+            {% if teams[name|string +" "+ row|string +" "+ n|string] == anskey[name|string +" "+ row|string +" "+ n|string] %}
+                <button type="button" id="{{name}} {{row}} {{n}}" value="{{teams[name|string +" "+ row|string +" "+ n|string]}}" class="btn btn-outline-success btn-block btn-bracket" style="background-color:#32CD32 !important;">{{teams[name|string +" "+ row|string +" "+ n|string]}}</button>
+            {% else %}
+                <button type="button" id="{{name}} {{row}} {{n}}" value="{{teams[name|string +" "+ row|string +" "+ n|string]}}" class="btn btn-outline-success btn-block btn-bracket" style="background-color:#DC143C !important;">{{teams[name|string +" "+ row|string +" "+ n|string]}}</button>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    {% endfor %}
+</div>
+{%- endmacro %}
+
+{% macro wholebracket(name,teams) -%}
+<div class="form-row row-bracket">
+    {{startRound(name,teams)}}
+    {{simpleRound(name,1,8)}}
+    {{simpleRound(name,2,4)}}
+    {{simpleRound(name,3,2)}}
+    {{simpleRound(name,4,1)}}
+</div>
+{%- endmacro %}
+
+{% macro wholebracketTeams(name,teams,entdict) -%}
+<div class="form-row row-bracket">
+    {{startRound(name,teams)}}
+    {{simpleRoundTeams(name,1,8,entdict)}}
+    {{simpleRoundTeams(name,2,4,entdict)}}
+    {{simpleRoundTeams(name,3,2,entdict)}}
+    {{simpleRoundTeams(name,4,1,entdict)}}
+</div>
+{%- endmacro %}
+
+{% macro wholebracketTeamsStale(name,teams,entdict,anskey) -%}
+<div class="form-row row-bracket">
+    {{startRound(name,teams)}}
+    {{simpleRoundTeamsStale(name,1,8,entdict,anskey)}}
+    {{simpleRoundTeamsStale(name,2,4,entdict,anskey)}}
+    {{simpleRoundTeamsStale(name,3,2,entdict,anskey)}}
+    {{simpleRoundTeamsStale(name,4,1,entdict,anskey)}}
+</div>
+{%- endmacro %}
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="description" content="CHS Stats Bracketology">
+    <meta name="author" content="Parker Lawrence, Caleb Smith">
+    <link rel="icon" href="static/images/favicon.png">
+
+    <title>CHS Stats Bracketology</title>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="static/css/main.css">
+</head>
+
+<body>
+    <h1>CHS Stats Bracketology</h1>
+    <div class="row header-row">
+        <div class="col-sm-2 header-col"><a class="header-item" href="/">Home Page</a></div>
+        <div class="col-sm-2 header-col"><a class="header-item" href="/bracket">Submit Bracket</a></div>
+        <div class="col-sm-2 header-col"><a class="header-item" href="/standing">Standings</a></div>
+        <div class="col-sm-2 header-col"><a class="header-item" href="/analysis">Data Analysis</a></div>
+        <div class="col-sm-2 header-col"><a class="header-item" href="/resources">Resources</a></div>
+    </div>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>
+
+

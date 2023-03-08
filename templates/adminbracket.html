@@ -1,0 +1,37 @@
+{% extends "template.html" %}
+
+{% block content %}
+<form action="{{ url_for('update_standings') }}" method="post">
+    SECRET ADMIN PAGE
+    Enter the standings and then click submit to calculate (or recalculate) standings and analysis for submitted responses.
+    Click the submit button sparingly. (It makes the server do a lot of calculation.)
+    <div class="form-row">
+        <button type="button" class="btn btn-failure btn-submit" onclick="resetBracketClick()">Reset Bracket</button>
+    </div>
+    <h3>{{data.southname}}</h3>
+    <hr>
+    {{wholebracketTeams("south",data.competing.southteams,data.answers)}}
+    <h3>{{data.westname}}</h3>
+    <hr>
+    {{wholebracketTeams("west",data.competing.westteams,data.answers)}}
+    <h3>{{data.eastname}}</h3>
+    <hr>
+    {{wholebracketTeams("east",data.competing.eastteams,data.answers)}}
+    <h3>{{data.midwestname}}</h3>
+    <hr>
+    {{wholebracketTeams("midwest",data.competing.midwestteams,data.answers)}}
+    <h3>Final Four</h3>
+    <hr>
+    <div class="form-row" style="min-width:800px;">
+        {{simpleRoundTeams("F",4,4,data.answers)}}
+        {{simpleRoundTeams("F",5,2,data.answers)}}
+        {{simpleRoundTeams("F",6,1,data.answers)}}
+    </div>
+
+    <div class="form-group col">
+        <button type="submit" class="btn btn-success btn-submit">Submit</button>
+    </div>
+</form>
+<script src="static/js/bracket.js"></script>
+{% endblock %}
+

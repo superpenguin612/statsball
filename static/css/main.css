@@ -1,0 +1,115 @@
+body {
+    max-width: 1200px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-image: url("../images/background.jpg");
+    background-color: rgb(190, 130, 55);
+    color: #f0f0f0;
+}
+
+.header-row {
+    margin-bottom: 15px;
+}
+
+.header-col {
+    text-align: center;
+}
+
+.header-item,
+.header-item:hover {
+    color: #f0f0f0;
+    font-weight: bold;
+}
+
+h1 {
+    margin-bottom: 5px; !important;
+    text-align: center;
+}
+
+/* Unused? */
+.form-row > h5 {
+    margin-left: 5px;
+}
+
+h3 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+}
+
+hr {
+    margin-top: -10px;
+    border-color: #f0f0f0;
+}
+
+.table {
+    max-width: 50% !important;
+    margin: auto;
+    text-align: center;
+}
+
+::placeholder {
+    color: #f0f0f0;
+    opacity: 1;
+}
+
+.btn-submit {
+    margin: auto;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.btn-bracket {
+    margin: auto;
+    /*margin-top: 5px;*/
+    border-color: #f0f0f0 !important;
+    color: #f0f0f0 !important;
+    font-weight: bold;
+}
+
+.col-bracket {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.row-bracket {
+    min-width: 1200px;
+}
+
+.form-control {
+    background: transparent !important;
+    color: #f0f0f0 !important;
+    font-weight: bold;
+}
+
+select {
+    background: transparent !important;
+}
+
+option {
+    background-color: #000;
+}
+
+input, select {
+    color: #f0f0f0 !important;
+    font-weight: bold;
+}
+
+textarea:focus, input:focus {
+    color: #f0f0f0
+}
+
+.form-control::-webkit-input-placeholder { color: #f0f0f0; }  /* WebKit, Blink, Edge */
+.form-control:-moz-placeholder { color: #f0f0f0; }  /* Mozilla Firefox 4 to 18 */
+.form-control::-moz-placeholder { color: #f0f0f0; }  /* Mozilla Firefox 19+ */
+.form-control:-ms-input-placeholder { color: #f0f0f0; }  /* Internet Explorer 10-11 */
+.form-control::-ms-input-placeholder { color: #f0f0f0; }  /* Microsoft Edge */
+
+
