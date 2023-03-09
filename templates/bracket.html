@@ -1,6 +1,4 @@
-{% extends "template.html" %}
-
-{% block content %}
+{% extends "template.html" %} {% block content %}
 <form action="{{ url_for('handle_data') }}" method="post">
     <div class="form-row">
         <div class="form-group col">
@@ -18,17 +16,17 @@
             <input type="number" name="age" class="form-control" step="1" required>
         </div>
         <div class="form-group col">
-            <label>Gender</label>
-            <select name="gender" class="custom-select" required>
+            <label>I'm a...</label>
+            <select name="persontype" class="custom-select" required>
                 <option value="" selected>Choose...</option>
-                <option value="0">Male</option>
-                <option value="1">Female</option>
+                <option value="0">Morning Person</option>
+                <option value="1">Night Person</option>
             </select>
         </div>
     </div>
     <div class="form-row">
         <div class="form-group col">
-            <label>High School Affiliation</label>
+            <label>Group Affiliation</label>
             <script>
                 function droppy() {
                     if ($(document.getElementById('schoolselect')).val() == "other") {
@@ -66,23 +64,17 @@
         </div>
     </div>
     <h3>{{data.southname}}</h3>
-    <hr>
-    {{wholebracket("south",data.competing.southteams)}}
+    <hr> {{wholebracket("south",data.competing.southteams)}}
     <h3>{{data.westname}}</h3>
-    <hr>
-    {{wholebracket("west",data.competing.westteams)}}
+    <hr> {{wholebracket("west",data.competing.westteams)}}
     <h3>{{data.eastname}}</h3>
-    <hr>
-    {{wholebracket("east",data.competing.eastteams)}}
+    <hr> {{wholebracket("east",data.competing.eastteams)}}
     <h3>{{data.midwestname}}</h3>
-    <hr>
-    {{wholebracket("midwest",data.competing.midwestteams)}}
+    <hr> {{wholebracket("midwest",data.competing.midwestteams)}}
     <h3>Final Four</h3>
     <hr>
     <div class="form-row" style="min-width:800px;">
-        {{simpleRound("F",4,4)}}
-        {{simpleRound("F",5,2)}}
-        {{simpleRound("F",6,1)}}
+        {{simpleRound("F",4,4)}} {{simpleRound("F",5,2)}} {{simpleRound("F",6,1)}}
     </div>
     Please do not click submit until you have the entire bracket filled out.
     <div class="form-row">

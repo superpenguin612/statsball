@@ -7,9 +7,9 @@
         <td><input type="text" class="form-control" id="{{n}} first"></td>
         <td><input type="text" class="form-control" id="{{n}} last"></td>
         <td>
-            <select class="custom-select" id="{{n}} gender">
-                <option value="0">Male</option>
-                <option value="1">Female</option>
+            <select class="custom-select" id="{{n}} persontype">
+                <option value="0">Morning Person</option>
+                <option value="1">Night Person</option>
             </select>
         </td>
         <td>
@@ -75,7 +75,7 @@
         <th>Age</th>
         <th>First</th>
         <th>Last</th>
-        <th>Gender</th>
+        <th>Person Type</th>
         <th>Knowledge</th>
         <th>School</th>
         <th>Email</th>
@@ -135,7 +135,7 @@ if (area2.addEventListener) {
 // }
 let responses = [
     {% for resp in responses|sort(attribute='data.score', reverse = True) %}
-    {"id":{{resp["id"]}},"score":{{resp["data"]["score"]}},"age":{{resp["data"]["age"] if resp["data"]["age"] != "" else 0}},"first":"{{resp["data"]["first"]}}","last":"{{resp["data"]["last"]}}","gender":{{resp["data"]["gender"] if resp["data"]["gender"] != "" else 0}},"knowledge":{{resp["data"]["knowledge"] if resp["data"]["knowledge"] != "" else 0}},"school":"{{resp["data"]["school"]}}","email":"{{resp["data"]["email"]}}"},
+    {"id":{{resp["id"]}},"score":{{resp["data"]["score"]}},"age":{{resp["data"]["age"] if resp["data"]["age"] != "" else 0}},"first":"{{resp["data"]["first"]}}","last":"{{resp["data"]["last"]}}","persontype":{{resp["data"]["persontype"] if resp["data"]["persontype"] != "" else 0}},"knowledge":{{resp["data"]["knowledge"] if resp["data"]["knowledge"] != "" else 0}},"school":"{{resp["data"]["school"]}}","email":"{{resp["data"]["email"]}}"},
     {% endfor %}
 ]
 function updaterecord(n,m) {
@@ -147,14 +147,14 @@ function updaterecord(n,m) {
         document.getElementById(String(n)+" age").value       = responses[m]["age"];
         document.getElementById(String(n)+" first").value     = responses[m]["first"];
         document.getElementById(String(n)+" last").value      = responses[m]["last"];
-        document.getElementById(String(n)+" gender").value    = responses[m]["gender"];
+        document.getElementById(String(n)+" persontype").value    = responses[m]["persontype"];
         document.getElementById(String(n)+" knowledge").value = responses[m]["knowledge"];
         document.getElementById(String(n)+" school").value    = responses[m]["school"];
         document.getElementById(String(n)+" email").value     = responses[m]["email"];
         document.getElementById(String(n)+" age").onchange       = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"age","age":this.value});}
         document.getElementById(String(n)+" first").onchange     = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"first","first":this.value});}
         document.getElementById(String(n)+" last").onchange      = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"last","last":this.value});}
-        document.getElementById(String(n)+" gender").onchange    = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"gender","gender":this.value});}
+        document.getElementById(String(n)+" persontype").onchange    = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"persontype","persontype":this.value});}
         document.getElementById(String(n)+" knowledge").onchange = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"knowledge","knowledge":this.value});}
         document.getElementById(String(n)+" school").onchange    = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"school","school":this.value});}
         document.getElementById(String(n)+" email").onchange     = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"email","email":this.value});}

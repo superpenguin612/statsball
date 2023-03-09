@@ -394,7 +394,7 @@ def handle_data():
 	if not isvalid(request.form.get("firstname",None)): return render_template("message.html",message="You left a required field blank.")
 	if not isvalid(request.form.get("lastname",None)):  return render_template("message.html",message="You left a required field blank.")
 	if not isvalid(request.form.get("age",None)):       return render_template("message.html",message="You left a required field blank.")
-	if not isvalid(request.form.get("gender",None)):    return render_template("message.html",message="You left a required field blank.")
+	if not isvalid(request.form.get("persontype",None)):    return render_template("message.html",message="You left a required field blank.")
 	if not isvalid(request.form.get("knowledge",None)): return render_template("message.html",message="You left a required field blank.")
 	answers = getguesses(request.form)
 
@@ -404,7 +404,7 @@ def handle_data():
 		"first":request.form["firstname"],
 		"last":request.form["lastname"],
 		"age":request.form["age"],
-		"gender":int(request.form["gender"]),
+		"persontype":int(request.form["persontype"]),
 		"school": request.form["otherschool"] if request.form["school"] == "other" else request.form["school"],
 		"knowledge":int(request.form["knowledge"]),
 		"email":request.form["email"],

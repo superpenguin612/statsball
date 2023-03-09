@@ -8,7 +8,7 @@ google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(callback);
 responses = [
 	{% for resp in responses %}
-		{"Score":{{resp.score if resp.score != "" else 0}},"Age":{{resp.age if resp.age != "" else 0}},"Gender":{{resp.gender if resp.gender != "" else 0}},"Knowledge":{{resp.knowledge if resp.knowledge != "" else 0}}},
+		{"Score":{{resp.score if resp.score != "" else 0}},"Age":{{resp.age if resp.age != "" else 0}},"Person Type":{{resp.persontype if resp.persontype != "" else 0}},"Knowledge":{{resp.knowledge if resp.knowledge != "" else 0}}},
 	{% endfor %}
 ]
 
@@ -195,8 +195,8 @@ function updategraph() {
 	drawScatterPlot(res4,"graph4","NPP plot for residual","Residual","Expected Z",true);
 	//---=-=-=-=-==-=-=-=-=-=--=-=-=-=-==-=-=-=-=-=--=-=-=-=-==-=-=-=-=-=--=-=-=-=-==-=-=-=-=-=
 	writeconstants("All",responses.map(function(a) {return a["Score"]}))
-	writeconstants("Male",  responses.filter(function (a) {return a["Gender"]==0;}).map(function(a) {return a["Score"]}))
-	writeconstants("Female",responses.filter(function (a) {return a["Gender"]==1;}).map(function(a) {return a["Score"]}))
+	writeconstants("Morning Person",  responses.filter(function (a) {return a["Person Type"]==0;}).map(function(a) {return a["Score"]}))
+	writeconstants("Night Person",responses.filter(function (a) {return a["Person Type"]==1;}).map(function(a) {return a["Score"]}))
 	writeconstants("None",    responses.filter(function (a) {return a["Knowledge"]==0;}).map(function(a) {return a["Score"]}))
 	writeconstants("Little",  responses.filter(function (a) {return a["Knowledge"]==1;}).map(function(a) {return a["Score"]}))
 	writeconstants("Moderate",responses.filter(function (a) {return a["Knowledge"]==2;}).map(function(a) {return a["Score"]}))
@@ -261,8 +261,8 @@ function updategraph() {
             <th>Max</th>
         </tr>
         {{gridrow("All")}}
-        {{gridrow("Female")}}
-        {{gridrow("Male")}}
+        {{gridrow("Morning Person")}}
+        {{gridrow("Night Person")}}
         {{gridrow("None")}}
         {{gridrow("Little")}}
         {{gridrow("Moderate")}}
