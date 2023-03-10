@@ -8,8 +8,8 @@
         <td><input type="text" class="form-control" id="{{n}} last"></td>
         <td>
             <select class="custom-select" id="{{n}} persontype">
-                <option value="0">Morning Person</option>
-                <option value="1">Night Person</option>
+                <option value="0">Right Hand</option>
+                <option value="1">Left Hand</option>
             </select>
         </td>
         <td>
@@ -44,7 +44,7 @@
       }
     </script>
     <div class="form-group col">
-        <label>High School Affiliation</label>
+        <label>Group Affiliation</label>
         <select name="school" class="custom-select" onchange="droppy()" id="schoolselect" required>
           <option value="any" selected>Any</option>
           {% for school in data.schools %}
