@@ -195,8 +195,8 @@ function updategraph() {
 	drawScatterPlot(res4,"graph4","NPP plot for residual","Residual","Expected Z",true);
 	//---=-=-=-=-==-=-=-=-=-=--=-=-=-=-==-=-=-=-=-=--=-=-=-=-==-=-=-=-=-=--=-=-=-=-==-=-=-=-=-=
 	writeconstants("All",responses.map(function(a) {return a["Score"]}))
-	writeconstants("Morning Person",  responses.filter(function (a) {return a["Person Type"]==0;}).map(function(a) {return a["Score"]}))
-	writeconstants("Night Person",responses.filter(function (a) {return a["Person Type"]==1;}).map(function(a) {return a["Score"]}))
+	writeconstants("Right Hand",  responses.filter(function (a) {return a["Person Type"]==0;}).map(function(a) {return a["Score"]}))
+	writeconstants("Left Hand",responses.filter(function (a) {return a["Person Type"]==1;}).map(function(a) {return a["Score"]}))
 	writeconstants("None",    responses.filter(function (a) {return a["Knowledge"]==0;}).map(function(a) {return a["Score"]}))
 	writeconstants("Little",  responses.filter(function (a) {return a["Knowledge"]==1;}).map(function(a) {return a["Score"]}))
 	writeconstants("Moderate",responses.filter(function (a) {return a["Knowledge"]==2;}).map(function(a) {return a["Score"]}))
