@@ -154,8 +154,8 @@ function updaterecord(n,m) {
         document.getElementById(String(n)+" age").onchange       = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"age","age":this.value});}
         document.getElementById(String(n)+" first").onchange     = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"first","first":this.value});}
         document.getElementById(String(n)+" last").onchange      = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"last","last":this.value});}
-        document.getElementById(String(n)+" persontype").onchange    = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"persontype","persontype":this.value});}
-        document.getElementById(String(n)+" knowledge").onchange = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"knowledge","knowledge":this.value});}
+        document.getElementById(String(n)+" persontype").onchange    = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"persontype","persontype":int(this.value)});}
+        document.getElementById(String(n)+" knowledge").onchange = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"knowledge","knowledge":int(this.value)});}
         document.getElementById(String(n)+" school").onchange    = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"school","school":this.value});}
         document.getElementById(String(n)+" email").onchange     = function() {$.post("modifyrecord",{"record":responses[m]["id"],"key":"email","email":this.value});}
         document.getElementById(String(n)+" delete").onclick = function() {
