@@ -1,13 +1,15 @@
-from __future__ import print_function # In python 2.7
-from flask import Flask, render_template, request, redirect, make_response, Response
-from flask_sqlalchemy import SQLAlchemy
-from flask_script import Manager
-from flask_migrate import Migrate
-import json
-import sys
-import os
-from sqlalchemy.orm.attributes import flag_modified
+from __future__ import print_function  # In python 2.7
 
+import json
+import os
+import sys
+
+from flask import (Flask, Response, make_response, redirect, render_template,
+                   request)
+from flask_migrate import Migrate
+from flask_script import Manager
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm.attributes import flag_modified
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
@@ -22,7 +24,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 import models
-
 
 adminpassword = os.environ.get('PASSWORD',"y34h y0u kn0w m3")
 
@@ -352,7 +353,10 @@ def updaterecord():
 	gh = models.Entry.query.filter_by(id=request.form["record"]).first()
 	if gh==None:
 		print("No matching record was found",file=sys.stderr)
-	gh.data[request.form["key"]]=request.form[request.form["key"]]
+	value = request.form[request.form["key"]]
+	if request.form["key"] in ["knowledge", "persontype"]:
+		value = int(value)
+	gh.data[request.form["key"]] = value
 	flag_modified(gh, 'data')
 	db.session.commit()
 	return render_template("message.html",message="If this page is rendered, a mistake was made.")
